@@ -24,21 +24,14 @@ function MyClaims() {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
+    <>
       <h1>My Claims</h1>
 
       {claims.length === 0 ? (
         <p>No claims found.</p>
       ) : (
         claims.map((claim) => (
-          <div
-            key={claim.claim_id}
-            style={{
-              border: "1px solid #ccc",
-              padding: "15px",
-              marginBottom: "10px"
-            }}
-          >
+          <div key={claim.claim_id} className="card">
             <h3>{claim.item_name}</h3>
 
             <p>
@@ -51,7 +44,7 @@ function MyClaims() {
           </div>
         ))
       )}
-    </div>
+    </>
   );
 }
 

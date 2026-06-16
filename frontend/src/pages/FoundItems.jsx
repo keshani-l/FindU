@@ -37,22 +37,14 @@ function FoundItems() {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
+    <>
       <h1>Found Items</h1>
 
       {items.length === 0 ? (
         <p>No found items found.</p>
       ) : (
         items.map((item) => (
-          <div
-            key={item.item_id}
-            style={{
-              border: "1px solid #ccc",
-              padding: "15px",
-              marginBottom: "15px",
-              borderRadius: "8px"
-            }}
-          >
+          <div key={item.item_id} className="card">
             {item.image && (
               <img
                 src={`http://localhost:5000/uploads/${item.image}`}
@@ -78,7 +70,7 @@ function FoundItems() {
           </div>
         ))
       )}
-    </div>
+    </>
   );
 }
 

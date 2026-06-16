@@ -60,18 +60,11 @@ function MyReports() {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
+    <>
       <h1>My Reports</h1>
 
       {reports.map((item) => (
-        <div
-          key={item.item_id}
-          style={{
-            border: "1px solid #ccc",
-            padding: "15px",
-            marginBottom: "10px"
-          }}
-        >
+        <div key={item.item_id} className="card">
           <h3>{item.item_name}</h3>
 
           <p>
@@ -101,7 +94,7 @@ function MyReports() {
           </button>
         </div>
       ))}
-    </div>
+    </>
   );
 }
 

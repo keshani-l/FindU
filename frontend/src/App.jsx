@@ -10,20 +10,24 @@ import FoundItems from "./pages/FoundItems";
 import MyReports from "./pages/MyReports";
 import MyClaims from "./pages/MyClaims";
 import AdminDashboard from "./pages/AdminDashboard";
+
+import Layout from "./components/Layout";
+
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/report-lost" element={<ReportLost />} />
-        <Route path="/report-found" element={<ReportFound />} />
-        <Route path="/lost-items" element={<LostItems />} />
-        <Route path="/found-items" element={<FoundItems />} />
-        <Route path="/my-reports" element={<MyReports />} />
-        <Route path="/my-claims" element={<MyClaims />} />
+
+        <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
+        <Route path="/report-lost" element={<Layout><ReportLost /></Layout>} />
+        <Route path="/report-found" element={<Layout><ReportFound /></Layout>} />
+        <Route path="/lost-items" element={<Layout><LostItems /></Layout>} />
+        <Route path="/found-items" element={<Layout><FoundItems /></Layout>} />
+        <Route path="/my-reports" element={<Layout><MyReports /></Layout>} />
+        <Route path="/my-claims" element={<Layout><MyClaims /></Layout>} />
+        <Route path="/admin" element={<Layout><AdminDashboard /></Layout>} />
       </Routes>
     </BrowserRouter>
   );
