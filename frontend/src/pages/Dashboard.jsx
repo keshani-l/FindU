@@ -22,6 +22,11 @@ function Dashboard() {
       </Link>
 
       <br /><br />
+      <Link to="/admin">
+  <button>Admin Dashboard</button>
+</Link>
+
+<br /><br />
 
       <Link to="/report-found">
         <button>Report Found Item</button>

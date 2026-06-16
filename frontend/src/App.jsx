@@ -9,7 +9,7 @@ import LostItems from "./pages/LostItems";
 import FoundItems from "./pages/FoundItems";
 import MyReports from "./pages/MyReports";
 import MyClaims from "./pages/MyClaims";
-
+import AdminDashboard from "./pages/AdminDashboard";
 function App() {
   return (
     <BrowserRouter>
@@ -17,6 +17,7 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/report-lost" element={<ReportLost />} />
         <Route path="/report-found" element={<ReportFound />} />
         <Route path="/lost-items" element={<LostItems />} />

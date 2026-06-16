@@ -8,6 +8,8 @@ function ReportLost() {
     location: ""
   });
 
+  const [image, setImage] = useState(null);
+
   const handleChange = (e) => {
     setForm({
       ...form,
@@ -20,12 +22,24 @@ function ReportLost() {
 
     const user = JSON.parse(localStorage.getItem("user"));
 
+    const formData = new FormData();
+    formData.append("user_id", user.id || user.user_id);
+    formData.append("item_name", form.item_name);
+    formData.append("description", form.description);
+    formData.append("location", form.location);
+
+    if (image) {
+      formData.append("image", image);
+    }
+
     try {
       const res = await axios.post(
         "http://localhost:5000/api/items/lost",
+        formData,
         {
-          user_id: user.id,
-          ...form
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
         }
       );
 
@@ -37,6 +51,7 @@ function ReportLost() {
         location: ""
       });
 
+      setImage(null);
     } catch (err) {
       alert(
         err.response?.data?.message ||
@@ -77,6 +92,14 @@ function ReportLost() {
           placeholder="Location"
           value={form.location}
           onChange={handleChange}
+        />
+
+        <br /><br />
+
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => setImage(e.target.files[0])}
         />
 
         <br /><br />

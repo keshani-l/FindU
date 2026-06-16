@@ -50,3 +50,46 @@ exports.getUserClaims = (req, res) => {
     res.status(200).json(results);
   });
 };
+exports.getAllClaims = (req, res) => {
+  const sql = `
+    SELECT
+      claims.*,
+      items.item_name
+    FROM claims
+    JOIN items
+    ON claims.item_id = items.item_id
+    ORDER BY claims.created_at DESC
+  `;
+
+  db.query(sql, (err, results) => {
+    if (err) {
+      return res.status(500).json({
+        message: err.message
+      });
+    }
+
+    res.status(200).json(results);
+  });
+};
+exports.updateClaimStatus = (req, res) => {
+  const { claim_id } = req.params;
+  const { status } = req.body;
+
+  const sql = `
+    UPDATE claims
+    SET status = ?
+    WHERE claim_id = ?
+  `;
+
+  db.query(sql, [status, claim_id], (err, result) => {
+    if (err) {
+      return res.status(500).json({
+        message: err.message
+      });
+    }
+
+    res.status(200).json({
+      message: "Claim status updated"
+    });
+  });
+};

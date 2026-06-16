@@ -9,15 +9,17 @@ exports.reportLostItem = (req, res) => {
     location
   } = req.body;
 
+  const image = req.file ? req.file.filename : null;
+
   const sql = `
     INSERT INTO items
-    (user_id,item_type,item_name,description,location)
-    VALUES (?, 'lost', ?, ?, ?)
+    (user_id, item_type, item_name, description, location, image)
+    VALUES (?, 'lost', ?, ?, ?, ?)
   `;
 
   db.query(
     sql,
-    [user_id, item_name, description, location],
+    [user_id, item_name, description, location, image],
     (err, result) => {
       if (err) {
         return res.status(500).json({
@@ -61,15 +63,17 @@ exports.reportFoundItem = (req, res) => {
     location
   } = req.body;
 
+  const image = req.file ? req.file.filename : null;
+
   const sql = `
     INSERT INTO items
-    (user_id,item_type,item_name,description,location)
-    VALUES (?, 'found', ?, ?, ?)
+    (user_id, item_type, item_name, description, location, image)
+    VALUES (?, 'found', ?, ?, ?, ?)
   `;
 
   db.query(
     sql,
-    [user_id, item_name, description, location],
+    [user_id, item_name, description, location, image],
     (err, result) => {
       if (err) {
         return res.status(500).json({
@@ -103,6 +107,8 @@ exports.getFoundItems = (req, res) => {
     res.status(200).json(results);
   });
 };
+
+// Get User Reports
 exports.getUserReports = (req, res) => {
   const { user_id } = req.params;
 
@@ -123,6 +129,8 @@ exports.getUserReports = (req, res) => {
     res.status(200).json(results);
   });
 };
+
+// Delete Item
 exports.deleteItem = (req, res) => {
   const { item_id } = req.params;
 
@@ -140,6 +148,8 @@ exports.deleteItem = (req, res) => {
     });
   });
 };
+
+// Update Item
 exports.updateItem = (req, res) => {
   const { item_id } = req.params;
   const { item_name, description, location } = req.body;
