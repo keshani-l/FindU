@@ -46,7 +46,11 @@ function Dashboard() {
       </Link>
 
       <br /><br />
+<Link to="/my-claims">
+  <button>My Claims</button>
+</Link>
 
+<br /><br />
       <button onClick={logout}>Logout</button>
     </div>
   );

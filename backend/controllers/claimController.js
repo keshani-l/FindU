@@ -26,3 +26,27 @@ exports.createClaim = (req, res) => {
     });
   });
 };
+exports.getUserClaims = (req, res) => {
+  const { user_id } = req.params;
+
+  const sql = `
+    SELECT
+      claims.*,
+      items.item_name
+    FROM claims
+    JOIN items
+    ON claims.item_id = items.item_id
+    WHERE claims.user_id = ?
+    ORDER BY claims.created_at DESC
+  `;
+
+  db.query(sql, [user_id], (err, results) => {
+    if (err) {
+      return res.status(500).json({
+        message: err.message
+      });
+    }
+
+    res.status(200).json(results);
+  });
+};

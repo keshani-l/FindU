@@ -8,6 +8,7 @@ import ReportFound from "./pages/ReportFound";
 import LostItems from "./pages/LostItems";
 import FoundItems from "./pages/FoundItems";
 import MyReports from "./pages/MyReports";
+import MyClaims from "./pages/MyClaims";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/lost-items" element={<LostItems />} />
         <Route path="/found-items" element={<FoundItems />} />
         <Route path="/my-reports" element={<MyReports />} />
+        <Route path="/my-claims" element={<MyClaims />} />
       </Routes>
     </BrowserRouter>
   );
