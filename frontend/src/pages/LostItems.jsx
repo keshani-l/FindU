@@ -10,10 +10,7 @@ function LostItems() {
 
   const fetchLostItems = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:5000/api/items/lost"
-      );
-
+      const res = await axios.get("http://localhost:5000/api/items/lost");
       setItems(res.data);
     } catch (err) {
       console.log(err);
@@ -37,23 +34,24 @@ function LostItems() {
               borderRadius: "8px"
             }}
           >
+            {item.image && (
+              <img
+                src={`http://localhost:5000/uploads/${item.image}`}
+                alt={item.item_name}
+                style={{
+                  width: "200px",
+                  height: "150px",
+                  objectFit: "cover",
+                  borderRadius: "8px"
+                }}
+              />
+            )}
+
             <h3>{item.item_name}</h3>
 
-            <p>
-              <strong>Description:</strong>{" "}
-              {item.description}
-            </p>
-
-            <p>
-              <strong>Location:</strong>{" "}
-              {item.location}
-            </p>
-
-            <p>
-              <strong>Status:</strong>{" "}
-              {item.status}
-            </p>
-
+            <p><strong>Description:</strong> {item.description}</p>
+            <p><strong>Location:</strong> {item.location}</p>
+            <p><strong>Status:</strong> {item.status}</p>
             <p>
               <strong>Reported:</strong>{" "}
               {new Date(item.created_at).toLocaleString()}

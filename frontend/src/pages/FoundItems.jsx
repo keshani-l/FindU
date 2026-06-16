@@ -10,10 +10,7 @@ function FoundItems() {
 
   const fetchFoundItems = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:5000/api/items/found"
-      );
-
+      const res = await axios.get("http://localhost:5000/api/items/found");
       setItems(res.data);
     } catch (err) {
       console.log(err);
@@ -22,20 +19,16 @@ function FoundItems() {
 
   const claimItem = async (item_id) => {
     const proof = prompt("Enter proof of ownership:");
-
     if (!proof) return;
 
     const user = JSON.parse(localStorage.getItem("user"));
 
     try {
-      const res = await axios.post(
-        "http://localhost:5000/api/claims",
-        {
-          item_id,
-          user_id: user.id,
-          proof
-        }
-      );
+      const res = await axios.post("http://localhost:5000/api/claims", {
+        item_id,
+        user_id: user.id || user.user_id,
+        proof
+      });
 
       alert(res.data.message);
     } catch (err) {
@@ -60,19 +53,24 @@ function FoundItems() {
               borderRadius: "8px"
             }}
           >
+            {item.image && (
+              <img
+                src={`http://localhost:5000/uploads/${item.image}`}
+                alt={item.item_name}
+                style={{
+                  width: "200px",
+                  height: "150px",
+                  objectFit: "cover",
+                  borderRadius: "8px"
+                }}
+              />
+            )}
+
             <h3>{item.item_name}</h3>
 
-            <p>
-              <strong>Description:</strong> {item.description}
-            </p>
-
-            <p>
-              <strong>Location:</strong> {item.location}
-            </p>
-
-            <p>
-              <strong>Status:</strong> {item.status}
-            </p>
+            <p><strong>Description:</strong> {item.description}</p>
+            <p><strong>Location:</strong> {item.location}</p>
+            <p><strong>Status:</strong> {item.status}</p>
 
             <button onClick={() => claimItem(item.item_id)}>
               Claim Item
