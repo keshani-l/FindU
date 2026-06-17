@@ -9,7 +9,6 @@ import LostItems from "./pages/LostItems";
 import FoundItems from "./pages/FoundItems";
 import MyReports from "./pages/MyReports";
 import MyClaims from "./pages/MyClaims";
-import AdminDashboard from "./pages/AdminDashboard";
 
 import Layout from "./components/Layout";
 
@@ -27,7 +26,6 @@ function App() {
         <Route path="/found-items" element={<Layout><FoundItems /></Layout>} />
         <Route path="/my-reports" element={<Layout><MyReports /></Layout>} />
         <Route path="/my-claims" element={<Layout><MyClaims /></Layout>} />
-        <Route path="/admin" element={<Layout><AdminDashboard /></Layout>} />
       </Routes>
     </BrowserRouter>
   );

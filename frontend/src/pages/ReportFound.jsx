@@ -1,9 +1,11 @@
 import { useState } from "react";
 import axios from "axios";
+import { itemCategories } from "../constants/itemCategories";
 
 function ReportFound() {
   const [form, setForm] = useState({
     item_name: "",
+    category: "Other",
     description: "",
     location: ""
   });
@@ -25,6 +27,7 @@ function ReportFound() {
     const formData = new FormData();
     formData.append("user_id", user.id || user.user_id);
     formData.append("item_name", form.item_name);
+    formData.append("category", form.category);
     formData.append("description", form.description);
     formData.append("location", form.location);
 
@@ -47,6 +50,7 @@ function ReportFound() {
 
       setForm({
         item_name: "",
+        category: "Other",
         description: "",
         location: ""
       });
@@ -61,54 +65,83 @@ function ReportFound() {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Report Found Item</h1>
+    <>
+      <div className="page-header">
+        <h1>Report Found Item</h1>
+        <p>Post found items quickly so owners can claim them.</p>
+      </div>
 
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="item_name"
-          placeholder="Item Name"
-          value={form.item_name}
-          onChange={handleChange}
-        />
+      <form className="card form-card" onSubmit={handleSubmit}>
+        <label>
+          Item name
+          <input
+            type="text"
+            name="item_name"
+            placeholder="Silver watch"
+            value={form.item_name}
+            onChange={handleChange}
+          />
+        </label>
 
-        <br /><br />
+        <label>
+          Category
+          <select
+            name="category"
+            value={form.category}
+            onChange={handleChange}
+          >
+            {itemCategories.map((category) => (
+              <option value={category} key={category}>
+                {category}
+              </option>
+            ))}
+          </select>
+        </label>
 
-        <textarea
-          name="description"
-          placeholder="Description"
-          rows="4"
-          cols="40"
-          value={form.description}
-          onChange={handleChange}
-        />
+        <label>
+          Description
+          <textarea
+            name="description"
+            placeholder="Add color, brand, and where it can be collected"
+            rows="4"
+            value={form.description}
+            onChange={handleChange}
+          />
+        </label>
 
-        <br /><br />
+        <label>
+          Found location
+          <input
+            type="text"
+            name="location"
+            placeholder="Cafeteria"
+            value={form.location}
+            onChange={handleChange}
+          />
+        </label>
 
-        <input
-          type="text"
-          name="location"
-          placeholder="Location"
-          value={form.location}
-          onChange={handleChange}
-        />
-
-        <br /><br />
-
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => setImage(e.target.files[0])}
-        />
-
-        <br /><br />
+        <label>
+          Item image
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => setImage(e.target.files[0])}
+          />
+        </label>
 
         <button type="submit">
-          Submit
+          Submit Found Report
         </button>
       </form>
-    </div>
+
+      <section className="note-panel">
+        <h2>Safety reminder</h2>
+        <p>
+          Keep valuable found items secure and share enough detail for the owner
+          to identify it. Owners may be asked to provide proof before collection.
+        </p>
+      </section>
+    </>
   );
 }
 

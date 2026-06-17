@@ -5,6 +5,7 @@ exports.reportLostItem = (req, res) => {
   const {
     user_id,
     item_name,
+    category = "Other",
     description,
     location
   } = req.body;
@@ -13,13 +14,13 @@ exports.reportLostItem = (req, res) => {
 
   const sql = `
     INSERT INTO items
-    (user_id, item_type, item_name, description, location, image)
-    VALUES (?, 'lost', ?, ?, ?, ?)
+    (user_id, item_type, item_name, category, description, location, image)
+    VALUES (?, 'lost', ?, ?, ?, ?, ?)
   `;
 
   db.query(
     sql,
-    [user_id, item_name, description, location, image],
+    [user_id, item_name, category, description, location, image],
     (err, result) => {
       if (err) {
         return res.status(500).json({
@@ -59,6 +60,7 @@ exports.reportFoundItem = (req, res) => {
   const {
     user_id,
     item_name,
+    category = "Other",
     description,
     location
   } = req.body;
@@ -67,13 +69,13 @@ exports.reportFoundItem = (req, res) => {
 
   const sql = `
     INSERT INTO items
-    (user_id, item_type, item_name, description, location, image)
-    VALUES (?, 'found', ?, ?, ?, ?)
+    (user_id, item_type, item_name, category, description, location, image)
+    VALUES (?, 'found', ?, ?, ?, ?, ?)
   `;
 
   db.query(
     sql,
-    [user_id, item_name, description, location, image],
+    [user_id, item_name, category, description, location, image],
     (err, result) => {
       if (err) {
         return res.status(500).json({
@@ -152,17 +154,17 @@ exports.deleteItem = (req, res) => {
 // Update Item
 exports.updateItem = (req, res) => {
   const { item_id } = req.params;
-  const { item_name, description, location } = req.body;
+  const { item_name, category = "Other", description, location } = req.body;
 
   const sql = `
     UPDATE items
-    SET item_name = ?, description = ?, location = ?
+    SET item_name = ?, category = ?, description = ?, location = ?
     WHERE item_id = ?
   `;
 
   db.query(
     sql,
-    [item_name, description, location, item_id],
+    [item_name, category, description, location, item_id],
     (err, result) => {
       if (err) {
         return res.status(500).json({

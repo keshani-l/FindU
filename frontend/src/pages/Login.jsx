@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 function Login() {
   const navigate = useNavigate();
+  const [message, setMessage] = useState("");
 
   const [form, setForm] = useState({
     email: "",
@@ -19,6 +20,7 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMessage("");
 
     try {
       const res = await axios.post(
@@ -29,43 +31,65 @@ function Login() {
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
-      alert(res.data.message);
       navigate("/dashboard");
     } catch (err) {
-      alert(err.response?.data?.message || "Cannot connect to backend");
+      setMessage(err.response?.data?.message || "Cannot connect to backend");
     }
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>FindU Login</h1>
+    <main className="auth-page">
+      <section className="auth-hero">
+        <Link to="/" className="brand auth-brand">
+          <span className="brand-mark">U</span>
+          <span>FindU</span>
+        </Link>
+        <h1>Campus lost and found, organized.</h1>
+        <p>
+          Report missing items, browse found items, and track claims from one
+          clean dashboard.
+        </p>
+      </section>
 
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          onChange={handleChange}
-        />
+      <section className="auth-card">
+        <div className="auth-heading">
+          <h1>Login</h1>
+          <p>Welcome back. Use your FindU account to continue.</p>
+        </div>
 
-        <br /><br />
+        {message && <div className="form-message">{message}</div>}
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          onChange={handleChange}
-        />
+        <form onSubmit={handleSubmit}>
+          <label>
+            Email
+            <input
+              type="email"
+              name="email"
+              placeholder="you@example.com"
+              value={form.email}
+              onChange={handleChange}
+            />
+          </label>
 
-        <br /><br />
+          <label>
+            Password
+            <input
+              type="password"
+              name="password"
+              placeholder="Enter your password"
+              value={form.password}
+              onChange={handleChange}
+            />
+          </label>
 
-        <button type="submit">Login</button>
-      </form>
+          <button type="submit">Login</button>
+        </form>
 
-      <p>
-        Don't have an account? <Link to="/register">Register here</Link>
-      </p>
-    </div>
+        <p className="auth-switch">
+          Don't have an account? <Link to="/register">Register here</Link>
+        </p>
+      </section>
+    </main>
   );
 }
 

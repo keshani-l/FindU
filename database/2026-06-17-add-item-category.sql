@@ -1,0 +1,2 @@
+ALTER TABLE items
+ADD COLUMN category VARCHAR(60) NOT NULL DEFAULT 'Other' AFTER item_type;

@@ -1,63 +1,241 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import axios from "axios";
 
-function Dashboard() {
-  const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user"));
+const apiBase = "http://localhost:5000";
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    navigate("/");
+function getUser() {
+  try {
+    return JSON.parse(localStorage.getItem("user"));
+  } catch {
+    return null;
+  }
+}
+
+function formatDate(value) {
+  if (!value) return "Today";
+
+  return new Date(value).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric"
+  });
+}
+
+function ItemPreview({ item, type }) {
+  const imageUrl = item.image ? `${apiBase}/uploads/${item.image}` : null;
+  const statusClass = type === "lost" ? "lost" : "found";
+  const category = item.category || "Other";
+
+  return (
+    <div className="recent-item">
+      {imageUrl ? (
+        <img src={imageUrl} alt={item.item_name} />
+      ) : (
+        <div className={`item-placeholder ${statusClass}`}>
+          {type === "lost" ? "L" : "F"}
+        </div>
+      )}
+
+      <div className="recent-item-info">
+        <strong>{item.item_name}</strong>
+        <span>{category} - {item.location || "Location not added"}</span>
+      </div>
+
+      <span className={`status-pill ${statusClass}`}>{type}</span>
+      <time>{formatDate(item.created_at)}</time>
+    </div>
+  );
+}
+
+function RecentPanel({ title, linkTo, items, type }) {
+  const emptyMessages = {
+    lost: "No lost items reported yet. Check again later or report a missing item.",
+    found: "No found items reported yet. Found something on campus? Add it here."
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>FindU Dashboard</h1>
-      <h3>Welcome, {user?.name}</h3>
+    <section className="panel">
+      <div className="panel-header">
+        <h2>{title}</h2>
+        <Link to={linkTo}>View all</Link>
+      </div>
 
-      <br />
+      <div className="recent-list">
+        {items.length === 0 ? (
+          <p className="empty-state">{emptyMessages[type]}</p>
+        ) : (
+          items.slice(0, 4).map((item) => (
+            <ItemPreview item={item} type={type} key={item.item_id} />
+          ))
+        )}
+      </div>
+    </section>
+  );
+}
 
-      <Link to="/report-lost">
-        <button>Report Lost Item</button>
-      </Link>
+function Dashboard() {
+  const user = getUser();
+  const userId = user?.id || user?.user_id;
+  const [summary, setSummary] = useState({
+    lost: [],
+    found: [],
+    reports: [],
+    claims: []
+  });
 
-      <br /><br />
-      <Link to="/admin">
-  <button>Admin Dashboard</button>
-</Link>
+  useEffect(() => {
+    const fetchDashboard = async () => {
+      try {
+        const requests = [
+          axios.get(`${apiBase}/api/items/lost`),
+          axios.get(`${apiBase}/api/items/found`),
+          userId
+            ? axios.get(`${apiBase}/api/items/user/${userId}`)
+            : Promise.resolve({ data: [] }),
+          userId
+            ? axios.get(`${apiBase}/api/claims/user/${userId}`)
+            : Promise.resolve({ data: [] })
+        ];
 
-<br /><br />
+        const [lostRes, foundRes, reportsRes, claimsRes] =
+          await Promise.all(requests);
 
-      <Link to="/report-found">
-        <button>Report Found Item</button>
-      </Link>
+        setSummary({
+          lost: lostRes.data || [],
+          found: foundRes.data || [],
+          reports: reportsRes.data || [],
+          claims: claimsRes.data || []
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    };
 
-      <br /><br />
+    fetchDashboard();
+  }, [userId]);
 
-      <Link to="/lost-items">
-        <button>View Lost Items</button>
-      </Link>
+  const stats = [
+    {
+      label: "Lost Items",
+      value: summary.lost.length,
+      caption: "Total lost items reported",
+      to: "/lost-items",
+      icon: "L",
+      tone: "blue"
+    },
+    {
+      label: "Found Items",
+      value: summary.found.length,
+      caption: "Total found items reported",
+      to: "/found-items",
+      icon: "F",
+      tone: "green"
+    },
+    {
+      label: "My Reports",
+      value: summary.reports.length,
+      caption: "Items you have reported",
+      to: "/my-reports",
+      icon: "R",
+      tone: "purple"
+    },
+    {
+      label: "My Claims",
+      value: summary.claims.length,
+      caption: "Claims you have made",
+      to: "/my-claims",
+      icon: "C",
+      tone: "orange"
+    }
+  ];
 
-      <br /><br />
+  return (
+    <>
+      <div className="page-header">
+        <h1>Dashboard</h1>
+        <p>
+          Welcome back, {user?.name || "FindU user"}. Find and report lost
+          items around campus quickly.
+        </p>
+      </div>
 
-      <Link to="/found-items">
-        <button>View Found Items</button>
-      </Link>
+      <section className="info-grid how-it-works" aria-label="How FindU works">
+        <article className="info-card">
+          <span>1</span>
+          <h2>Report lost or found item</h2>
+          <p>Add the item category, location, description, and photo.</p>
+        </article>
 
-      <br /><br />
+        <article className="info-card">
+          <span>2</span>
+          <h2>Browse matching items</h2>
+          <p>Check recent lost and found posts by category and location.</p>
+        </article>
 
-      <Link to="/my-reports">
-        <button>My Reports</button>
-      </Link>
+        <article className="info-card">
+          <span>3</span>
+          <h2>Claim with proof</h2>
+          <p>Only claim your own item and share proof of ownership.</p>
+        </article>
+      </section>
 
-      <br /><br />
-<Link to="/my-claims">
-  <button>My Claims</button>
-</Link>
+      <section className="stats-grid">
+        {stats.map((stat) => (
+          <article className={`stat-card ${stat.tone}`} key={stat.label}>
+            <div className="stat-icon">{stat.icon}</div>
+            <div>
+              <strong>{stat.value}</strong>
+              <h2>{stat.label}</h2>
+              <p>{stat.caption}</p>
+            </div>
+            <Link to={stat.to}>View all</Link>
+          </article>
+        ))}
+      </section>
 
-<br /><br />
-      <button onClick={logout}>Logout</button>
-    </div>
+      <section className="dashboard-grid">
+        <RecentPanel
+          title="Recent Found Items"
+          linkTo="/found-items"
+          items={summary.found}
+          type="found"
+        />
+        <RecentPanel
+          title="Recent Lost Items"
+          linkTo="/lost-items"
+          items={summary.lost}
+          type="lost"
+        />
+      </section>
+
+      <section className="dashboard-bottom">
+        <div className="cta-panel">
+          <div className="shield-badge">F</div>
+          <div>
+            <h2>Let's keep our campus safe</h2>
+            <p>Report lost or found items to help others.</p>
+          </div>
+          <Link to="/report-lost" className="primary-link">
+            Report an Item
+          </Link>
+        </div>
+
+        <div className="announcement-panel">
+          <div className="panel-header">
+            <h2>Announcements</h2>
+          </div>
+          <div className="announcement-card">
+            <p>Please check Lost and Found regularly for your missing items.</p>
+            <time>Today</time>
+          </div>
+          <div className="announcement-card">
+            <p>For urgent lost items, contact the campus lost and found office.</p>
+            <time>Help note</time>
+          </div>
+        </div>
+      </section>
+    </>
   );
 }
 

@@ -10,9 +10,27 @@ require("dotenv").config();
 
 const app = express();
 
+db.query("SHOW COLUMNS FROM items LIKE 'category'", (err, results) => {
+  if (err) {
+    console.log(err);
+    return;
+  }
+
+  if (results.length === 0) {
+    db.query(
+      "ALTER TABLE items ADD COLUMN category VARCHAR(60) NOT NULL DEFAULT 'Other' AFTER item_type",
+      (alterErr) => {
+        if (alterErr) {
+          console.log(alterErr);
+        }
+      }
+    );
+  }
+});
+
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })

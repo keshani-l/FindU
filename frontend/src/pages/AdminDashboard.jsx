@@ -1,24 +1,24 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+async function fetchClaims(setClaims) {
+  try {
+    const res = await axios.get(
+      "http://localhost:5000/api/claims"
+    );
+
+    setClaims(res.data);
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 function AdminDashboard() {
   const [claims, setClaims] = useState([]);
 
   useEffect(() => {
-    fetchClaims();
+    fetchClaims(setClaims);
   }, []);
-
-  const fetchClaims = async () => {
-    try {
-      const res = await axios.get(
-        "http://localhost:5000/api/claims"
-      );
-
-      setClaims(res.data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
 
   const updateStatus = async (claim_id, status) => {
     try {
@@ -28,8 +28,8 @@ function AdminDashboard() {
       );
 
       alert(res.data.message);
-      fetchClaims();
-    } catch (err) {
+      fetchClaims(setClaims);
+    } catch {
       alert("Error updating status");
     }
   };

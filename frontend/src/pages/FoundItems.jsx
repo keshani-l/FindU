@@ -1,21 +1,21 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+async function fetchFoundItems(setItems) {
+  try {
+    const res = await axios.get("http://localhost:5000/api/items/found");
+    setItems(res.data);
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 function FoundItems() {
   const [items, setItems] = useState([]);
 
   useEffect(() => {
-    fetchFoundItems();
+    fetchFoundItems(setItems);
   }, []);
-
-  const fetchFoundItems = async () => {
-    try {
-      const res = await axios.get("http://localhost:5000/api/items/found");
-      setItems(res.data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
 
   const claimItem = async (item_id) => {
     const proof = prompt("Enter proof of ownership:");
@@ -31,17 +31,31 @@ function FoundItems() {
       });
 
       alert(res.data.message);
-    } catch (err) {
+    } catch {
       alert("Error submitting claim");
     }
   };
 
   return (
     <>
-      <h1>Found Items</h1>
+      <div className="page-header">
+        <h1>Found Items</h1>
+        <p>Browse recovered items and claim only what belongs to you.</p>
+      </div>
+
+      <section className="note-panel">
+        <h2>Claim reminder</h2>
+        <p>
+          Only claim items you own. You may be asked to provide proof of
+          ownership before the item is returned.
+        </p>
+      </section>
 
       {items.length === 0 ? (
-        <p>No found items found.</p>
+        <section className="empty-state card">
+          No found items reported yet. Found something on campus? Add a found
+          item report so the owner can locate it.
+        </section>
       ) : (
         items.map((item) => (
           <div key={item.item_id} className="card">
@@ -60,13 +74,18 @@ function FoundItems() {
 
             <h3>{item.item_name}</h3>
 
+            <div className="item-meta">
+              <span className="category-pill">{item.category || "Other"}</span>
+            </div>
             <p><strong>Description:</strong> {item.description}</p>
             <p><strong>Location:</strong> {item.location}</p>
             <p><strong>Status:</strong> {item.status}</p>
 
-            <button onClick={() => claimItem(item.item_id)}>
-              Claim Item
-            </button>
+            <div className="card-actions">
+              <button onClick={() => claimItem(item.item_id)}>
+                Claim Item
+              </button>
+            </div>
           </div>
         ))
       )}
